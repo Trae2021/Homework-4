@@ -1,0 +1,30 @@
+---
+title: "Homework 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+library(tidyverse)
+choco <- read.csv("https://ds202-at-isu.github.io/labs/data/choco.csv")
+count(choco)
+##the total number of chocolate bars rated is 1,852
+ggplot(choco, aes(x=Review.Date)) + geom_bar() + scale_x_continuous(breaks = round(seq(min(2006), max(2017), by = 1)))
+##the number of ratings seemingly increases each year generally, though this is not a perfect trend and the final year is one of the lowest (this could be because the data was compiled partway through that year and therefore ratings were not taken from the complete year
+
+ggplot(choco, aes(x=Rating)) + geom_histogram(binwidth=.5)
+##The ratings are distributed in a sort of bell curve, leaning a bit more to the right. There are very very few '1's and '5's but there are clearly at least 1 of each, so these can probably be considered outliers. Especially the '5' ratings as it looks especially slim and there seem to also be no ratings of 4.5.
+
+ggplot(choco, aes(x=Cocoa.Pct, y=Rating)) + geom_jitter()
+##Cocoa percentage does not appear to have a linear relationship on rating since the graph of cocoa percentage does not appear to slope up or down. However, though not definitive, there is a large concentration of dots in the center of the graph and it looks as though the average rating may be greater towards the middle of the graph of cocoa percentage. In addition, the only rating above a 4 is when the cocoa percentage is directly in the middle of the graph.
+
+choco2 = dplyr::filter(choco, Company.Location %in% c("U.S.A.", "France", "Canada"))
+ggplot(choco2, aes(x=Company.Location, y=Rating)) + stat_summary(fun = "mean", geom = "bar") + ylim(0, 5)
+##Ratings appear to be extremely similar between the three countries we are focusing on with no significant differences. We can see that Canada's average rating is better than France's which is better than USA's, but the margin by which they differ appears to be not much greater than 1/10 of a rating point. 
+
+#Is cocoa percentage in chocolates increasing or decreasing?
+ggplot(choco, aes(x=Review.Date, y=Cocoa.Pct)) + stat_summary(fun = "mean", geom = "line") + scale_x_continuous(breaks = round(seq(min(2006), max(2017), by = 1)))
+##Inconclusive; the graph of average cocoa percentage over time sharply rises in the first few years, only for the next year to make a dramatic fall from the highest average percentage to the lowest average percentage it's ever seen. It then slopes back up towards where it was before, but then levels towards the middle of the graph. This graph doesn't show a linear relationship between year and cocoa percentage, but it shows some really cool stuff--it is very interesting that it drops from its highest point to its lowest point from 2008 to 2009. However, we must keep in mind that this difference is still only just over 2% cocoa.
+
